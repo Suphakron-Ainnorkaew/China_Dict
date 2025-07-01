@@ -3,13 +3,15 @@ const mongoose = require('mongoose');
 
 const connectDB = async () => {
   try {
-    await mongoose.connect(process.env.MONGODB_URI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true
-    });
-    console.log('MongoDB connected');
+    const uri = process.env.MONGODB_URI;
+    console.log('MONGODB_URI:', uri); // Debug
+    if (!uri) {
+      throw new Error('MONGODB_URI is not defined');
+    }
+    await mongoose.connect(uri);
+    console.log('MongoDB connected to database:', mongoose.connection.db.databaseName); // Debug database name
   } catch (error) {
-    console.error('MongoDB connection error:', error);
+    console.error('MongoDB connection error:', error.message);
     process.exit(1);
   }
 };
