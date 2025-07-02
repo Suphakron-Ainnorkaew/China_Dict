@@ -124,7 +124,7 @@ router.delete('/Deletewords/:id', async (req, res) => {
   }
 });
 
-router.get('/words', auth, async (req, res) => {
+router.get('/words', authMiddleware, async (req, res) => {
   try {
     console.log('Fetching words for user:', req.user.id);
     const words = await Word.find();
