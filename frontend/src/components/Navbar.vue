@@ -63,6 +63,17 @@
             โปรไฟล์
           </router-link>
 
+          <router-link 
+            to="/game" 
+            class="flex items-center px-3 py-2 rounded-lg font-medium transition-all duration-200 hover:bg-red-700"
+            :class="$route.path === '/game' ? 'bg-red-800 text-yellow-300 shadow-lg' : 'text-white hover:text-yellow-200'"
+          >
+            <svg class="w-4 h-4 mr-2 fill-current" viewBox="0 0 20 20">
+              <path d="M7 4V2a1 1 0 011-1h4a1 1 0 011 1v2h4a1 1 0 011 1v1a1 1 0 01-1 1v9a1 1 0 01-1 1H4a1 1 0 01-1-1V7a1 1 0 01-1-1V5a1 1 0 011-1h3zM6 7v10h8V7H6z"/>
+            </svg>
+            เกมทายคำศัพท์
+          </router-link>
+
           <!-- เปลี่ยนรหัสผ่าน -->
           <router-link 
             v-if="isAuthenticated" 
@@ -170,6 +181,18 @@
               <path d="M7 4V2a1 1 0 011-1h4a1 1 0 011 1v2h4a1 1 0 011 1v1a1 1 0 01-1 1v9a1 1 0 01-1 1H4a1 1 0 01-1-1V7a1 1 0 01-1-1V5a1 1 0 011-1h3zM6 7v10h8V7H6z"/>
             </svg>
             <span>คำศัพท์</span>
+          </router-link>
+
+          <router-link 
+            to="/game" 
+            @click="closeMobileMenu"
+            class="block px-3 py-3 rounded-lg font-medium transition-colors duration-200 flex items-center text-sm sm:text-base"
+            :class="$route.path === '/game' ? 'bg-red-800 text-yellow-300' : 'text-white hover:text-yellow-200 hover:bg-red-800'"
+          >
+            <svg class="w-4 h-4 mr-3 fill-current flex-shrink-0" viewBox="0 0 20 20">
+              <path d="M7 4V2a1 1 0 011-1h4a1 1 0 011 1v2h4a1 1 0 011 1v1a1 1 0 01-1 1v9a1 1 0 01-1 1H4a1 1 0 01-1-1V7a1 1 0 01-1-1V5a1 1 0 011-1h3zM6 7v10h8V7H6z"/>
+            </svg>
+            <span>เกมทายคำศัพท์คำศัพท์</span>
           </router-link>
 
           <!-- โปรไฟล์ (เมื่อ login แล้ว) -->

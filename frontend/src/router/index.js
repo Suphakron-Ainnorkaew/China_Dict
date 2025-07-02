@@ -7,6 +7,7 @@ import ChangePassword from '../views/ChangePassword.vue';
 import { useAuthStore } from '../store';
 import VocabularyDisplay from '../views/VocabularyDisplay.vue';
 import ProfileView from '../views/ProfileView.vue';
+import GameView from '../views/GameView.vue';
 
 
 const routes = [
@@ -42,6 +43,12 @@ const routes = [
     path: '/profile',
     name: 'Profile',
     component: ProfileView,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/game',
+    name: 'Game',
+    component: GameView,
     meta: { requiresAuth: true }
   },
 ];
