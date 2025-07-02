@@ -124,4 +124,16 @@ router.delete('/Deletewords/:id', async (req, res) => {
   }
 });
 
+router.get('/words', auth, async (req, res) => {
+  try {
+    console.log('Fetching words for user:', req.user.id);
+    const words = await Word.find();
+    console.log('Words sent:', words.length);
+    res.json(words);
+  } catch (error) {
+    console.error('Words error:', error.message);
+    res.status(500).json({ message: error.message });
+  }
+});
+
 module.exports = router;

@@ -28,14 +28,17 @@
           เริ่มเกมใหม่
         </button>
       </div>
+      <div v-else-if="!currentWord" class="text-center mb-6">
+        <p class="text-red-500">ไม่สามารถโหลดคำศัพท์ได้</p>
+      </div>
       <div v-else class="text-center mb-6">
         <p class="text-gray-600 text-lg">คะแนน: {{ score }}</p>
       </div>
 
       <!-- Word Display -->
-      <div v-if="!isLoading && !error && !gameOver" class="text-center mb-8">
+      <div v-if="!isLoading && !error && !gameOver && currentWord" class="text-center mb-8">
         <div class="bg-white p-6 rounded-lg shadow-lg max-w-md mx-auto">
-          <h2 class="text-3xl font-bold text-gray-800 mb-2">{{ currentWord.chinese }}</h2>
+          <h2 class="text-3xl f ont-bold text-gray-800 mb-2">{{ currentWord.chinese }}</h2>
           <p class="text-lg text-gray-600 mb-1">พินอิน: {{ currentWord.pinyin }}</p>
           <p class="text-lg text-gray-600 mb-4">คำอ่านไทย: {{ currentWord.thai_pronunciation }}</p>
           <div class="flex justify-center gap-4">
@@ -55,11 +58,13 @@
 </template>
 
 <script>
-import { ref, computed, onMounted } from 'vue';
+import { ref, onMounted } from 'vue';
 import axios from 'axios';
+import { useAuthStore } from '../store';
 
 export default {
   setup() {
+    const authStore = useAuthStore();
     const words = ref([]);
     const currentWord = ref(null);
     const options = ref([]);
@@ -70,20 +75,34 @@ export default {
 
     // Fetch vocabulary data from backend
     const fetchWords = async () => {
+      if (!authStore.token) {
+        error.value = 'กรุณาเข้าสู่ระบบเพื่อเล่นเกม';
+        console.error('No token available');
+        isLoading.value = false;
+        return;
+      }
       isLoading.value = true;
       error.value = '';
       try {
         console.log('Fetching words from:', import.meta.env.VITE_API_URL + '/words');
-        const response = await axios.get(`${import.meta.env.VITE_API_URL}/words`);
+        console.log('Using token:', authStore.token);
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/words`, {
+          headers: { Authorization: `Bearer ${authStore.token}` }
+        });
         words.value = response.data.map(word => ({
           ...word,
           id: word._id // Map _id to id for consistency
         }));
         console.log('Fetched words:', words.value.length);
-        selectRandomWord();
+        if (words.value.length > 0) {
+          selectRandomWord();
+        } else {
+          error.value = 'ไม่มีคำศัพท์ในฐานข้อมูล';
+          console.log('No words found in database');
+        }
       } catch (err) {
         error.value = err.response?.data?.message || 'ไม่สามารถดึงคำศัพท์ได้';
-        console.error('Fetch words error:', error.value);
+        console.error('Fetch words error:', err.response?.data || err.message);
       } finally {
         isLoading.value = false;
       }
@@ -91,10 +110,16 @@ export default {
 
     // Select a random word and generate options
     const selectRandomWord = () => {
-      if (words.value.length === 0) return;
+      if (words.value.length === 0) {
+        error.value = 'ไม่มีคำศัพท์ให้เลือก';
+        console.log('No words available to select');
+        currentWord.value = null;
+        options.value = [];
+        return;
+      }
       const randomIndex = Math.floor(Math.random() * words.value.length);
       currentWord.value = words.value[randomIndex];
-      console.log('Selected word:', currentWord.value.chinese);
+      console.log('Selected word:', currentWord.value?.chinese);
 
       // Generate options: correct answer and one random wrong answer
       const correctAnswer = currentWord.value.thai_meaning;
@@ -103,8 +128,7 @@ export default {
         const wrongIndex = Math.floor(Math.random() * words.value.length);
         wrongAnswer = words.value[wrongIndex].thai_meaning;
       } while (wrongAnswer === correctAnswer || !wrongAnswer);
-      
-      // Shuffle options
+
       options.value = [correctAnswer, wrongAnswer].sort(() => Math.random() - 0.5);
       console.log('Options:', options.value);
     };
@@ -134,6 +158,7 @@ export default {
     });
 
     return {
+      authStore,
       words,
       currentWord,
       options,
