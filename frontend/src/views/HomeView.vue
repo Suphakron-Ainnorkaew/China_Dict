@@ -1,121 +1,201 @@
 <template>
-  <div class="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50">
-    <!-- Header Section -->
-    <div class="bg-white/70 backdrop-blur-sm border-b border-gray-200/50 sticky top-0 z-10">
-      <div class="container mx-auto px-6 py-6">
-        <div class="flex items-center justify-between">
-          <div class="flex items-center space-x-3">
-            <div class="w-12 h-12 bg-gradient-to-r from-red-500 to-yellow-500 rounded-xl flex items-center justify-center shadow-lg">
-              <span class="text-white font-bold text-xl">中泰</span>
+  <div class="min-h-screen bg-gradient-to-br from-rose-50 via-white to-amber-50">
+    <!-- Hero Section -->
+    <div class="relative overflow-hidden">
+      <div class="absolute inset-0 bg-gradient-to-br from-red-500/5 to-yellow-500/5"></div>
+      <div class="container mx-auto px-6 py-16 relative">
+        <div class="text-center mb-12">
+          <div class="inline-flex items-center space-x-4 mb-6">
+            <div class="w-16 h-16 bg-gradient-to-r from-red-500 to-yellow-500 rounded-2xl flex items-center justify-center shadow-2xl transform rotate-3 hover:rotate-0 transition-transform duration-300">
+              <span class="text-white font-bold text-2xl">中泰</span>
             </div>
-            <div>
-              <h1 class="text-3xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">
-                Chinese-Thai Dictionary
-              </h1>
-              <p class="text-gray-500 text-sm">Discover the beauty of languages</p>
+            <div class="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-500 rounded-2xl flex items-center justify-center shadow-2xl transform -rotate-3 hover:rotate-0 transition-transform duration-300">
+              <span class="text-white font-bold text-2xl">ไทย</span>
             </div>
           </div>
           
-          <!-- Pro Badge -->
-          <div v-if="isProUser" class="bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-4 py-2 rounded-full text-sm font-semibold shadow-lg">
-            <span class="mr-1">⭐</span> Pro User
+          <h1 class="text-5xl md:text-6xl font-bold mb-4">
+            <span class="bg-gradient-to-r from-red-600 via-orange-500 to-yellow-500 bg-clip-text text-transparent">
+              Chinese
+            </span>
+            <span class="text-gray-800 mx-2">×</span>
+            <span class="bg-gradient-to-r from-blue-600 via-purple-500 to-pink-500 bg-clip-text text-transparent">
+              Thai
+            </span>
+          </h1>
+          
+          <p class="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
+            ค้นพบความงามของภาษาจีนและไทย ผ่านพจนานุกรมที่ออกแบบมาเพื่อการเรียนรู้
+          </p>
+
+          <!-- Search Bar -->
+          <div class="relative max-w-2xl mx-auto mb-8">
+            <div class="absolute inset-y-0 left-0 pl-6 flex items-center pointer-events-none">
+              <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+              </svg>
+            </div>
+            <input 
+              v-model="searchQuery" 
+              @input="searchWords" 
+              placeholder="ค้นหาคำศัพท์จีน-ไทย..." 
+              class="w-full pl-16 pr-6 py-5 text-lg border-2 border-gray-200 rounded-3xl focus:ring-4 focus:ring-orange-100 focus:border-orange-400 transition-all duration-300 bg-white/90 backdrop-blur-sm shadow-2xl hover:shadow-3xl placeholder-gray-500"
+            />
+            <div class="absolute inset-y-0 right-0 flex items-center pr-6">
+              <div class="bg-gradient-to-r from-orange-400 to-red-500 text-white px-4 py-2 rounded-full text-sm font-medium">
+                搜索
+              </div>
+            </div>
+          </div>
+
+          <!-- Pro User Badge -->
+          <div v-if="isProUser" class="inline-flex bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-6 py-3 rounded-full text-sm font-semibold shadow-lg mb-8">
+            <span class="mr-2">⭐</span> Pro User
+            <button 
+              @click="downloadPdf" 
+              class="ml-4 bg-white/20 hover:bg-white/30 px-4 py-1 rounded-full transition-colors duration-300 flex items-center space-x-1"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+              </svg>
+              <span class="text-sm">PDF</span>
+            </button>
           </div>
         </div>
       </div>
     </div>
 
-    <div class="container mx-auto px-6 py-8">
-      <!-- Search Section -->
-      <div class="mb-8">
-        <div class="relative max-w-2xl mx-auto">
-          <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-            <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-            </svg>
-          </div>
-          <input 
-            v-model="searchQuery" 
-            @input="searchWords" 
-            placeholder="Search Chinese or Thai words..." 
-            class="w-full pl-12 pr-6 py-4 text-lg border-2 border-gray-200 rounded-2xl focus:ring-4 focus:ring-indigo-100 focus:border-indigo-400 transition-all duration-300 bg-white/80 backdrop-blur-sm shadow-lg hover:shadow-xl"
-          />
-          
-          <!-- Search suggestions/hints -->
-          <div class="flex flex-wrap gap-2 mt-4 justify-center">
-            <span class="text-xs text-gray-500 bg-gray-100 px-3 py-1 rounded-full">Try: 你好</span>
-            <span class="text-xs text-gray-500 bg-gray-100 px-3 py-1 rounded-full">สวัสดี</span>
-            <span class="text-xs text-gray-500 bg-gray-100 px-3 py-1 rounded-full">谢谢</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Action Bar -->
-      <div class="flex justify-center mb-8">
-        <button 
-          v-if="isProUser" 
-          @click="downloadPdf" 
-          class="group bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white px-8 py-3 rounded-xl font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 flex items-center space-x-2"
-        >
-          <svg class="w-5 h-5 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-          </svg>
-          <span>Download PDF</span>
-        </button>
-      </div>
-
-      <!-- Words Grid -->
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        <div 
-          v-for="(word, index) in words" 
-          :key="word._id"
-          class="group"
-          :style="{ animationDelay: `${index * 100}ms` }"
-        >
-          <WordCard 
-            :word="word" 
-            class="transform hover:-translate-y-2 transition-all duration-300 animate-fade-in-up"
-          />
-        </div>
-      </div>
-
-      <!-- Empty State -->
-      <div v-if="words.length === 0 && !error && searchQuery" class="text-center mt-16">
-        <div class="w-24 h-24 mx-auto mb-6 bg-gradient-to-r from-gray-300 to-gray-400 rounded-full flex items-center justify-center">
-          <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-          </svg>
-        </div>
-        <h3 class="text-xl font-semibold text-gray-700 mb-2">No words found</h3>
-        <p class="text-gray-500">Try adjusting your search terms or browse all words</p>
+    <!-- Words Section -->
+    <div class="container mx-auto px-6 py-16">
+      <div class="text-center mb-12">
+        <h2 class="text-3xl font-bold text-gray-800 mb-4">
+          {{ searchQuery ? 'ผลการค้นหา' : 'คำศัพท์แนะนำ' }}
+        </h2>
+        <p class="text-gray-600">
+          {{ searchQuery ? `ค้นหา: "${searchQuery}"` : 'คำศัพท์ยอดนิยมและที่ใช้บ่อย' }}
+        </p>
       </div>
 
       <!-- Loading State -->
-      <div v-if="loading" class="flex justify-center items-center mt-16">
+      <div v-if="loading" class="flex justify-center items-center py-16">
         <div class="relative">
-          <div class="w-16 h-16 border-4 border-indigo-200 rounded-full animate-spin"></div>
-          <div class="absolute top-0 left-0 w-16 h-16 border-4 border-indigo-600 rounded-full animate-spin border-t-transparent"></div>
+          <div class="w-16 h-16 border-4 border-orange-200 rounded-full animate-spin"></div>
+          <div class="absolute top-0 left-0 w-16 h-16 border-4 border-orange-600 rounded-full animate-spin border-t-transparent"></div>
         </div>
       </div>
 
       <!-- Error Message -->
-      <div v-if="error" class="max-w-md mx-auto mt-8">
-        <div class="bg-red-50 border-l-4 border-red-400 p-4 rounded-r-xl">
+      <div v-else-if="error" class="max-w-md mx-auto mb-8">
+        <div class="bg-red-50 border-l-4 border-red-400 p-6 rounded-r-2xl shadow-lg">
           <div class="flex items-center">
-            <svg class="w-5 h-5 text-red-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="w-6 h-6 text-red-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
             </svg>
             <p class="text-red-700 font-medium">{{ error }}</p>
           </div>
         </div>
       </div>
+
+      <!-- Words Grid -->
+      <div v-else-if="words.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 mb-16">
+        <div 
+          v-for="(word, index) in words" 
+          :key="word._id"
+          class="group relative bg-white/80 backdrop-blur-sm rounded-3xl p-6 shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-gray-100"
+          :style="{ animationDelay: `${index * 100}ms` }"
+        >
+          <!-- Decorative gradient background -->
+          <div class="absolute inset-0 bg-gradient-to-br from-orange-50 to-red-50 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+          
+          <div class="relative z-10">
+            <!-- Chinese Character -->
+            <div class="text-center mb-4">
+              <div class="text-4xl font-bold text-gray-800 mb-1 group-hover:scale-110 transition-transform duration-300">
+                {{ word.chinese }}
+              </div>
+              <div v-if="word.pinyin" class="text-gray-500 text-sm">{{ word.pinyin }}</div>
+            </div>
+
+            <!-- Thai Translation -->
+            <div class="text-center mb-4">
+              <div class="text-xl font-semibold text-blue-600 mb-1">
+                {{ word.thai }}
+              </div>
+              <div v-if="word.pronunciation" class="text-gray-600 text-sm">{{ word.pronunciation }}</div>
+            </div>
+
+            <!-- Meaning -->
+            <div class="text-center">
+              <div v-if="word.meaning" class="text-gray-700 font-medium mb-2 text-sm">{{ word.meaning }}</div>
+              <div v-if="word.category" class="text-xs text-gray-500 bg-gray-100 px-3 py-1 rounded-full inline-block">
+                {{ word.category }}
+              </div>
+            </div>
+
+            <!-- Hover Effect -->
+            <div class="absolute -top-2 -right-2 w-8 h-8 bg-gradient-to-r from-orange-400 to-red-500 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center">
+              <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CTA Section for More Words -->
+      <div v-if="!searchQuery && words.length > 0" class="text-center">
+        <div class="bg-gradient-to-r from-orange-500 to-red-500 rounded-3xl p-12 text-white shadow-2xl">
+          <h3 class="text-3xl font-bold mb-4">เรียนรู้คำศัพท์เพิ่มเติม</h3>
+          <p class="text-orange-100 mb-8 text-lg">ค้นพบคำศัพท์มากกว่า 10,000 คำพร้อมตัวอย่างการใช้งาน</p>
+          <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            <router-link 
+            to="/vocabulary" 
+            class="bg-white text-orange-600 px-8 py-4 rounded-2xl font-bold hover:bg-orange-50 transition-colors duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+            :class="$route.path === '/' ? '' : 'text-white hover:text-yellow-200'"
+          >
+            เรียกดูคำศัพท์ทั้งหมด
+          </router-link>
+            <router-link 
+            to="/vocabulary" 
+            class="bg-white text-orange-600 px-8 py-4 rounded-2xl font-bold hover:bg-orange-50 transition-colors duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+            :class="$route.path === '/' ? '' : 'text-white hover:text-yellow-200'"
+          >
+            หมวดคำศัพท์
+          </router-link>
+          </div>
+        </div>
+      </div>
+
+      <!-- Empty State -->
+      <div v-else-if="searchQuery" class="text-center py-16">
+        <div class="w-24 h-24 mx-auto mb-6 bg-gradient-to-r from-gray-300 to-gray-400 rounded-full flex items-center justify-center">
+          <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+          </svg>
+        </div>
+        <h3 class="text-2xl font-bold text-gray-700 mb-4">ไม่พบคำศัพท์</h3>
+        <p class="text-gray-500 text-lg">ลองเปลี่ยนคำค้นหาหรือเรียกดูคำศัพท์ทั้งหมด</p>
+        <button 
+          @click="searchQuery = ''; searchWords()" 
+          class="mt-6 bg-gradient-to-r from-orange-500 to-red-500 text-white px-8 py-3 rounded-2xl font-semibold hover:from-orange-600 hover:to-red-600 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+        >
+          ดูคำศัพท์ทั้งหมด
+        </button>
+      </div>
     </div>
 
     <!-- Footer -->
-    <footer class="mt-20 bg-gray-50 border-t border-gray-200">
-      <div class="container mx-auto px-6 py-8">
-        <div class="text-center text-gray-600">
-          <p class="mb-2">Made with ❤️ for language learners</p>
-          <p class="text-sm">Bridging cultures through words</p>
+    <footer class="bg-gray-800 text-white py-12">
+      <div class="container mx-auto px-6">
+        <div class="text-center">
+          <div class="flex justify-center items-center space-x-3 mb-6">
+            <div class="w-10 h-10 bg-gradient-to-r from-red-500 to-yellow-500 rounded-xl flex items-center justify-center">
+              <span class="text-white font-bold">中泰</span>
+            </div>
+            <span class="text-2xl font-bold">Chinese-Thai Dictionary</span>
+          </div>
+          <p class="text-gray-400 mb-6">เชื่อมโยงวัฒนธรรมผ่านคำศัพท์</p>
+          <p class="text-gray-500 text-sm">Made with ❤️ for language learners</p>
         </div>
       </div>
     </footer>
@@ -123,7 +203,7 @@
 </template>
 
 <script>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import axios from 'axios';
 import { useAuthStore } from '../store';
 import WordCard from '../components/WordCard.vue';
@@ -144,7 +224,8 @@ export default {
         const response = await axios.get(`${import.meta.env.VITE_API_URL}/words`, {
           headers: { Authorization: `Bearer ${authStore.token}` }
         });
-        words.value = response.data;
+        // เอาแค่ 24 คำแรกสำหรับหน้าแรก
+        words.value = response.data.slice(0, 24);
       } catch (err) {
         error.value = err.response?.data?.message || 'Failed to fetch words';
       } finally {
@@ -195,7 +276,9 @@ export default {
     };
 
     // Initialize
-    fetchWords();
+    onMounted(() => {
+      fetchWords();
+    });
 
     return { 
       words, 
@@ -211,7 +294,8 @@ export default {
 </script>
 
 <style scoped>
-@keyframes fade-in-up {
+/* Custom animations */
+@keyframes fadeInUp {
   from {
     opacity: 0;
     transform: translateY(30px);
@@ -222,8 +306,8 @@ export default {
   }
 }
 
-.animate-fade-in-up {
-  animation: fade-in-up 0.6s ease-out forwards;
+.grid > div {
+  animation: fadeInUp 0.6s ease-out forwards;
 }
 
 /* Custom scrollbar */
@@ -236,11 +320,16 @@ export default {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(to bottom, #cbd5e1, #94a3b8);
+  background: linear-gradient(to bottom, #fb923c, #dc2626);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(to bottom, #94a3b8, #64748b);
+  background: linear-gradient(to bottom, #ea580c, #b91c1c);
+}
+
+/* Hover effects */
+.hover\:shadow-3xl:hover {
+  box-shadow: 0 35px 60px -12px rgba(0, 0, 0, 0.25);
 }
 </style>
