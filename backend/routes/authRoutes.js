@@ -66,31 +66,37 @@ router.post('/change-password', authMiddleware(), async (req, res) => {
 
     // Validate input
     if (!oldPassword || !newPassword) {
-      return res.status(400).json({ message: 'Old password and new password are required' });
+      return res.status(400).json({ message: 'กรุณากรอกรหัสผ่านปัจจุบันและรหัสผ่านใหม่' });
     }
     if (newPassword.length < 6) {
-      return res.status(400).json({ message: 'New password must be at least 6 characters' });
+      return res.status(400).json({ message: 'รหัสผ่านใหม่ต้องมีอย่างน้อย 6 ตัวอักษร' });
+    }
+
+    // Check if new password is same as old password
+    if (oldPassword === newPassword) {
+      return res.status(400).json({ message: 'รหัสผ่านใหม่ต้องไม่เหมือนกับรหัสผ่านปัจจุบัน' });
     }
 
     // Find user
     const user = await User.findById(req.user.id);
     if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+      return res.status(404).json({ message: 'ไม่พบผู้ใช้นี้' });
     }
 
     // Verify old password
     const isMatch = await user.comparePassword(oldPassword);
     if (!isMatch) {
-      return res.status(401).json({ message: 'Old password is incorrect' });
+      return res.status(401).json({ message: 'รหัสผ่านปัจจุบันไม่ถูกต้อง' });
     }
 
     // Update password
     user.password = newPassword;
     await user.save();
 
-    res.json({ message: 'Password changed successfully' });
+    res.json({ message: 'เปลี่ยนรหัสผ่านสำเร็จแล้ว' });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error('Change password error:', error);
+    res.status(500).json({ message: 'เกิดข้อผิดพลาดในการเปลี่ยนรหัสผ่าน' });
   }
 });
 

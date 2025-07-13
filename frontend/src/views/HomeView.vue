@@ -44,7 +44,7 @@
           
           <p class="text-xl text-gray-600 mb-12 max-w-3xl mx-auto leading-relaxed">
             ค้นพบความงามของภาษาจีนและไทย ผ่านพจนานุกรมที่ออกแบบมาเพื่อการเรียนรู้ 
-            <span class="font-semibold text-orange-600">มากกว่า 10,000 คำศัพท์</span> พร้อมตัวอย่างการใช้งาน
+            <span class="font-semibold text-orange-600">มากกว่า 1000 คำศัพท์</span> พร้อมตัวอย่างการใช้งาน
           </p>
 
           <!-- Search Bar -->
@@ -62,7 +62,15 @@
             />
             <div class="absolute inset-y-0 right-0 flex items-center pr-6">
               <div class="bg-gradient-to-r from-orange-400 to-red-500 text-white px-6 py-3 rounded-full text-sm font-semibold shadow-lg">
-                搜索
+                <router-link 
+                  to="/vocabulary" 
+                  class="group bg-gradient-to-r from-red-500 to-orange-500 text-white px-8 py-4 rounded-2xl font-bold text-lg shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 flex items-center space-x-2"
+                >
+                  <span>搜索</span>
+                  <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                  </svg>
+                </router-link>
               </div>
             </div>
           </div>
@@ -123,7 +131,7 @@
               </svg>
             </div>
             <h3 class="text-2xl font-bold text-gray-800 mb-4">คำศัพท์ครบถ้วน</h3>
-            <p class="text-gray-600 leading-relaxed">มากกว่า 10,000 คำศัพท์จีน-ไทย พร้อมพินอินและคำอ่านไทย</p>
+            <p class="text-gray-600 leading-relaxed">มากกว่า 1000 คำศัพท์จีน-ไทย พร้อมพินอินและคำอ่านไทย</p>
           </div>
           
           <div class="text-center group">

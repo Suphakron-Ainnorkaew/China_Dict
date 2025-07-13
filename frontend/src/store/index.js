@@ -25,13 +25,7 @@ export const useAuthStore = defineStore('auth', {
       localStorage.setItem('token', this.token);
       localStorage.setItem('user', JSON.stringify(this.user));
     },
-    async requestOtp() {
-      await axios.post(
-        `${import.meta.env.VITE_API_URL}/auth/request-otp`,
-        {},
-        { headers: { Authorization: `Bearer ${this.token}` } }
-      );
-    },
+
     async changePassword(data) {
       await axios.post(
         `${import.meta.env.VITE_API_URL}/auth/change-password`,
