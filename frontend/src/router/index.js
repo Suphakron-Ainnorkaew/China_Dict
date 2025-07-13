@@ -1,5 +1,5 @@
 
-import { createRouter, createWebHistory } from 'vue-router';
+import { createRouter, createWebHashHistory } from 'vue-router';
 import Home from '../views/HomeView.vue';
 import Login from '../views/Login.vue';
 import Register from '../views/Register.vue';
@@ -54,17 +54,26 @@ const routes = [
 ];
 
 const router = createRouter({
-  history: createWebHistory(),
+  history: createWebHashHistory(),
   routes
 });
 
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
   const authStore = useAuthStore();
+  
+  // Check if route requires authentication
   if (to.meta.requiresAuth && !authStore.isAuthenticated) {
     next('/login');
-  } else {
-    next();
+    return;
   }
+  
+  // If user is authenticated and trying to access login/register, redirect to home
+  if (authStore.isAuthenticated && (to.path === '/login' || to.path === '/register')) {
+    next('/');
+    return;
+  }
+  
+  next();
 });
 
 export default router;

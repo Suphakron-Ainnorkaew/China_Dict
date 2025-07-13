@@ -263,10 +263,12 @@
 <script>
 import { ref, onMounted, onBeforeUnmount } from 'vue'
 import { useAuthStore } from '../store'
+import { useRouter } from 'vue-router'
 
 export default {
   setup() {
     const authStore = useAuthStore()
+    const router = useRouter()
     const showMobileMenu = ref(false)
     const showUserMenu = ref(false)
     const userMenu = ref(null)
@@ -290,11 +292,13 @@ export default {
       console.log('User Menu Toggled:', showUserMenu.value)
     }
 
-    const logout = () => {
+    const logout = async () => {
       authStore.logout()
       showUserMenu.value = false
       showMobileMenu.value = false
       console.log('Logged Out')
+      // Navigate to login page
+      await router.push('/login')
     }
 
     // Close user menu when clicking outside
