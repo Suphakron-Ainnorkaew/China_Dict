@@ -165,118 +165,81 @@
           </svg>
         </button>
       </div>
+    </div>
 
-      <!-- Enhanced Mobile Menu -->
-      <div 
-        v-show="showMobileMenu"
-        class="md:hidden bg-gradient-to-b from-red-700 to-red-800 rounded-xl mt-3 shadow-2xl border border-red-600 overflow-hidden mobile-menu transform transition-all duration-300"
-        :class="{ 'active': showMobileMenu }"
-      >
-        <div class="px-4 py-4 space-y-2">
-          <!-- หน้าหลัก -->
-          <router-link 
-            to="/" 
-            @click="closeMobileMenu"
-            class="block px-4 py-3 rounded-xl font-medium transition-all duration-300 flex items-center text-sm sm:text-base hover:bg-red-800/80 hover:scale-105 transform"
-            :class="$route.path === '/' ? 'bg-red-800/90 text-yellow-300 shadow-lg scale-105' : 'text-white hover:text-yellow-200'"
-          >
+    <!-- Mobile Menu Backdrop -->
+    <transition name="fade">
+      <div v-if="showMobileMenu" class="fixed inset-0 bg-black bg-opacity-40 z-40" @click="closeMobileMenu"></div>
+    </transition>
+
+    <!-- Mobile Drawer Menu -->
+    <transition name="slide">
+      <div v-if="showMobileMenu" class="fixed top-0 left-0 w-72 max-w-full h-full bg-gradient-to-b from-red-700 to-red-800 shadow-2xl z-50 transition-transform duration-300 rounded-r-3xl flex flex-col">
+        <div class="flex items-center justify-between px-4 py-4 border-b border-yellow-400">
+          <div class="flex items-center space-x-2">
+            <div class="bg-yellow-400 p-2 rounded-lg shadow-md">
+              <svg class="w-5 h-5 fill-red-600" viewBox="0 0 24 24">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+              </svg>
+            </div>
+            <span class="text-lg font-bold text-white">中泰词典</span>
+          </div>
+          <button @click="closeMobileMenu" class="text-white text-2xl font-bold focus:outline-none">&times;</button>
+        </div>
+        <div class="flex-1 overflow-y-auto px-2 py-4">
+          <!-- Mobile menu items (copy from your current mobile menu, add @click="closeMobileMenu" to each router-link/button) -->
+          <router-link to="/" @click="closeMobileMenu" class="block px-4 py-3 rounded-xl font-medium transition-all duration-300 flex items-center text-sm sm:text-base hover:bg-red-800/80 hover:scale-105 transform" :class="$route.path === '/' ? 'bg-red-800/90 text-yellow-300 shadow-lg scale-105' : 'text-white hover:text-yellow-200'">
             <svg class="w-5 h-5 mr-3 fill-current flex-shrink-0" viewBox="0 0 20 20">
               <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/>
             </svg>
             <span>หน้าหลัก</span>
           </router-link>
-
-          <!-- คำศัพท์ -->
-          <router-link 
-            to="/vocabulary" 
-            @click="closeMobileMenu"
-            class="block px-4 py-3 rounded-xl font-medium transition-all duration-300 flex items-center text-sm sm:text-base hover:bg-red-800/80 hover:scale-105 transform"
-            :class="$route.path === '/vocabulary' ? 'bg-red-800/90 text-yellow-300 shadow-lg scale-105' : 'text-white hover:text-yellow-200'"
-          >
+          <router-link to="/vocabulary" @click="closeMobileMenu" class="block px-4 py-3 rounded-xl font-medium transition-all duration-300 flex items-center text-sm sm:text-base hover:bg-red-800/80 hover:scale-105 transform" :class="$route.path === '/vocabulary' ? 'bg-red-800/90 text-yellow-300 shadow-lg scale-105' : 'text-white hover:text-yellow-200'">
             <svg class="w-5 h-5 mr-3 fill-current flex-shrink-0" viewBox="0 0 20 20">
               <path d="M7 4V2a1 1 0 011-1h4a1 1 0 011 1v2h4a1 1 0 011 1v1a1 1 0 01-1 1v9a1 1 0 01-1 1H4a1 1 0 01-1-1V7a1 1 0 01-1-1V5a1 1 0 011-1h3zM6 7v10h8V7H6z"/>
             </svg>
             <span>คำศัพท์</span>
           </router-link>
-
-          <!-- เกมทายคำศัพท์ -->
-          <router-link 
-            to="/game" 
-            @click="closeMobileMenu"
-            class="block px-4 py-3 rounded-xl font-medium transition-all duration-300 flex items-center text-sm sm:text-base hover:bg-red-800/80 hover:scale-105 transform"
-            :class="$route.path === '/game' ? 'bg-red-800/90 text-yellow-300 shadow-lg scale-105' : 'text-white hover:text-yellow-200'"
-          >
+          <router-link to="/game" @click="closeMobileMenu" class="block px-4 py-3 rounded-xl font-medium transition-all duration-300 flex items-center text-sm sm:text-base hover:bg-red-800/80 hover:scale-105 transform" :class="$route.path === '/game' ? 'bg-red-800/90 text-yellow-300 shadow-lg scale-105' : 'text-white hover:text-yellow-200'">
             <svg class="w-5 h-5 mr-3 fill-current flex-shrink-0" viewBox="0 0 20 20">
               <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3z"/>
             </svg>
             <span>เกมทายคำศัพท์</span>
           </router-link>
-
-          <!-- โปรไฟล์ (เมื่อ login แล้ว) -->
-          <router-link 
-            v-if="isAuthenticated" 
-            to="/profile" 
-            @click="closeMobileMenu"
-            class="block px-4 py-3 rounded-xl font-medium transition-all duration-300 flex items-center text-sm sm:text-base hover:bg-red-800/80 hover:scale-105 transform"
-            :class="$route.path === '/profile' ? 'bg-red-800/90 text-yellow-300 shadow-lg scale-105' : 'text-white hover:text-yellow-200'"
-          >
+          <router-link v-if="isAuthenticated" to="/profile" @click="closeMobileMenu" class="block px-4 py-3 rounded-xl font-medium transition-all duration-300 flex items-center text-sm sm:text-base hover:bg-red-800/80 hover:scale-105 transform" :class="$route.path === '/profile' ? 'bg-red-800/90 text-yellow-300 shadow-lg scale-105' : 'text-white hover:text-yellow-200'">
             <svg class="w-5 h-5 mr-3 fill-current flex-shrink-0" viewBox="0 0 20 20">
               <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
             </svg>
             <span>โปรไฟล์</span>
           </router-link>
-
-          <!-- เปลี่ยนรหัสผ่าน (เมื่อ login แล้ว) -->
-          <router-link 
-            v-if="isAuthenticated" 
-            to="/change-password" 
-            @click="closeMobileMenu"
-            class="block px-4 py-3 rounded-xl font-medium transition-all duration-300 flex items-center text-sm sm:text-base hover:bg-red-800/80 hover:scale-105 transform"
-            :class="$route.path === '/change-password' ? 'bg-red-800/90 text-yellow-300 shadow-lg scale-105' : 'text-white hover:text-yellow-200'"
-          >
+          <router-link v-if="isAuthenticated" to="/change-password" @click="closeMobileMenu" class="block px-4 py-3 rounded-xl font-medium transition-all duration-300 flex items-center text-sm sm:text-base hover:bg-red-800/80 hover:scale-105 transform" :class="$route.path === '/change-password' ? 'bg-red-800/90 text-yellow-300 shadow-lg scale-105' : 'text-white hover:text-yellow-200'">
             <svg class="w-5 h-5 mr-3 fill-current flex-shrink-0" viewBox="0 0 20 20">
               <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/>
             </svg>
             <span>เปลี่ยนรหัสผ่าน</span>
           </router-link>
-
-          <!-- Logout (เมื่อ login แล้ว) -->
           <div v-if="isAuthenticated" class="border-t border-red-600 pt-4 mt-4">
-            <button 
-              @click="logout"
-              class="block px-4 py-3 rounded-xl font-medium transition-all duration-300 flex items-center w-full text-white hover:text-yellow-200 hover:bg-red-800/80 text-sm sm:text-base hover:scale-105 transform"
-            >
+            <button @click="logout" class="block px-4 py-3 rounded-xl font-medium transition-all duration-300 flex items-center w-full text-white hover:text-yellow-200 hover:bg-red-800/80 text-sm sm:text-base hover:scale-105 transform">
               <svg class="w-5 h-5 mr-3 fill-current flex-shrink-0" viewBox="0 0 20 20">
                 <path fill-rule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z" clip-rule="evenodd"/>
               </svg>
               <span>ออกจากระบบ</span>
             </button>
           </div>
-
-          <!-- Auth Links (เมื่อยังไม่ login) -->
           <div v-else class="space-y-3 border-t border-red-600 pt-4 mt-4">
-            <router-link 
-              to="/login" 
-              @click="closeMobileMenu"
-              class="block px-4 py-3 rounded-xl font-medium transition-all duration-300 flex items-center text-sm sm:text-base hover:bg-red-800/80 hover:scale-105 transform"
-              :class="$route.path === '/login' ? 'bg-red-800/90 text-yellow-300 shadow-lg scale-105' : 'text-white hover:text-yellow-200'"
-            >
+            <router-link to="/login" @click="closeMobileMenu" class="block px-4 py-3 rounded-xl font-medium transition-all duration-300 flex items-center text-sm sm:text-base hover:bg-red-800/80 hover:scale-105 transform" :class="$route.path === '/login' ? 'bg-red-800/90 text-yellow-300 shadow-lg scale-105' : 'text-white hover:text-yellow-200'">
               <svg class="w-5 h-5 mr-3 fill-current flex-shrink-0" viewBox="0 0 20 20">
                 <path fill-rule="evenodd" d="M3 3a1 1 0 011 1v12a1 1 0 11-2 0V4a1 1 0 011-1zm7.707 3.293a1 1 0 010 1.414L9.414 9H17a1 1 0 110 2H9.414l1.293 1.293a1 1 0 01-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0z" clip-rule="evenodd"/>
               </svg>
               <span>เข้าสู่ระบบ</span>
             </router-link>
-            <router-link 
-              to="/register" 
-              @click="closeMobileMenu"
-              class="block bg-gradient-to-r from-yellow-400 to-yellow-500 hover:from-yellow-500 hover:to-yellow-600 text-red-800 font-medium px-4 py-3 rounded-xl transition-all duration-300 text-center text-sm sm:text-base shadow-lg hover:shadow-xl hover:scale-105 transform"
-            >
+            <router-link to="/register" @click="closeMobileMenu" class="block bg-gradient-to-r from-yellow-400 to-yellow-500 hover:from-yellow-500 hover:to-yellow-600 text-red-800 font-medium px-4 py-3 rounded-xl transition-all duration-300 text-center text-sm sm:text-base shadow-lg hover:shadow-xl hover:scale-105 transform">
               สมัครสมาชิก
             </router-link>
           </div>
         </div>
       </div>
-    </div>
+    </transition>
   </nav>
 </template>
 
@@ -453,5 +416,18 @@ export default {
 
 .hover-lift:hover {
   transform: translateY(-2px);
+}
+
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 0.2s;
+}
+.fade-enter-from, .fade-leave-to {
+  opacity: 0;
+}
+.slide-enter-active, .slide-leave-active {
+  transition: transform 0.3s cubic-bezier(.4,0,.2,1);
+}
+.slide-enter-from, .slide-leave-to {
+  transform: translateX(-100%);
 }
 </style>
