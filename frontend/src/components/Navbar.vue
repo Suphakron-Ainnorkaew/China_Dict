@@ -78,19 +78,7 @@
             <span class="relative z-10">เกมทายคำศัพท์</span>
           </router-link>
 
-          <!-- เปลี่ยนรหัสผ่าน -->
-          <router-link 
-            v-if="isAuthenticated" 
-            to="/change-password" 
-            class="flex items-center px-4 py-2 rounded-xl font-medium transition-all duration-300 hover:bg-red-700/80 hover:scale-105 relative overflow-hidden group"
-            :class="$route.path === '/change-password' ? 'bg-red-800/90 text-yellow-300 shadow-lg scale-105' : 'text-white hover:text-yellow-200'"
-          >
-            <div class="absolute inset-0 bg-gradient-to-r from-yellow-400/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-            <svg class="w-5 h-5 mr-2 fill-current relative z-10" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/>
-            </svg>
-            <span class="relative z-10">เปลี่ยนรหัสผ่าน</span>
-          </router-link>
+
 
           <!-- Enhanced User Menu (เมื่อ login แล้ว) -->
           <div v-if="isAuthenticated" class="relative ml-2" ref="userMenu">
@@ -119,6 +107,15 @@
                 <p class="text-sm font-medium text-gray-900">{{ user?.name || 'ผู้ใช้' }}</p>
                 <p class="text-xs text-gray-500">{{ user?.email || 'user@example.com' }}</p>
               </div>
+              <router-link 
+                to="/change-password"
+                class="w-full text-left px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 flex items-center transition-all duration-200 group"
+              >
+                <svg class="w-4 h-4 mr-3 fill-current group-hover:scale-110 transition-transform duration-200" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/>
+                </svg>
+                <span class="font-medium">เปลี่ยนรหัสผ่าน</span>
+              </router-link>
               <button 
                 @click="logout"
                 class="w-full text-left px-4 py-3 text-gray-700 hover:bg-red-50 hover:text-red-600 flex items-center transition-all duration-200 group"
@@ -212,13 +209,14 @@
             </svg>
             <span>โปรไฟล์</span>
           </router-link>
-          <router-link v-if="isAuthenticated" to="/change-password" @click="closeMobileMenu" class="block px-4 py-3 rounded-xl font-medium transition-all duration-300 flex items-center text-sm sm:text-base hover:bg-red-800/80 hover:scale-105 transform" :class="$route.path === '/change-password' ? 'bg-red-800/90 text-yellow-300 shadow-lg scale-105' : 'text-white hover:text-yellow-200'">
-            <svg class="w-5 h-5 mr-3 fill-current flex-shrink-0" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/>
-            </svg>
-            <span>เปลี่ยนรหัสผ่าน</span>
-          </router-link>
+
           <div v-if="isAuthenticated" class="border-t border-red-600 pt-4 mt-4">
+            <router-link to="/change-password" @click="closeMobileMenu" class="block px-4 py-3 rounded-xl font-medium transition-all duration-300 flex items-center text-sm sm:text-base hover:bg-red-800/80 hover:scale-105 transform" :class="$route.path === '/change-password' ? 'bg-red-800/90 text-yellow-300 shadow-lg scale-105' : 'text-white hover:text-yellow-200'">
+              <svg class="w-5 h-5 mr-3 fill-current flex-shrink-0" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/>
+              </svg>
+              <span>เปลี่ยนรหัสผ่าน</span>
+            </router-link>
             <button @click="logout" class="block px-4 py-3 rounded-xl font-medium transition-all duration-300 flex items-center w-full text-white hover:text-yellow-200 hover:bg-red-800/80 text-sm sm:text-base hover:scale-105 transform">
               <svg class="w-5 h-5 mr-3 fill-current flex-shrink-0" viewBox="0 0 20 20">
                 <path fill-rule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z" clip-rule="evenodd"/>
