@@ -1,6 +1,56 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Mobile Menu Styles */
+.mobile-menu {
+  display: none;
+}
+
+.mobile-menu.active {
+  display: block !important;
+}
+
+/* Mobile menu animation */
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+    max-height: 0;
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    max-height: 500px;
+  }
+}
+
+.mobile-menu {
+  animation: slideDown 0.3s ease-out;
+  overflow: hidden;
+}
+
+/* Ensure mobile menu is visible on mobile devices */
+@media (max-width: 767.98px) {
+  .mobile-menu {
+    display: block !important;
+  }
+  
+  /* Hide desktop menu on mobile */
+  .desktop-menu {
+    display: none !important;
+  }
+}
+
+/* Show desktop menu on larger screens */
+@media (min-width: 768px) {
+  .desktop-menu {
+    display: flex !important;
+  }
+  
+  /* Hide mobile menu on desktop */
+  .mobile-menu {
+    display: none !important;
   }
 }
 

@@ -170,6 +170,7 @@
       <div 
         v-show="showMobileMenu"
         class="md:hidden bg-gradient-to-b from-red-700 to-red-800 rounded-xl mt-3 shadow-2xl border border-red-600 overflow-hidden mobile-menu transform transition-all duration-300"
+        :class="{ 'active': showMobileMenu }"
       >
         <div class="px-4 py-4 space-y-2">
           <!-- หน้าหลัก -->
@@ -303,6 +304,15 @@ export default {
     const toggleMobileMenu = () => {
       showMobileMenu.value = !showMobileMenu.value
       console.log('Mobile Menu Toggled:', showMobileMenu.value)
+      // Force re-render for mobile menu
+      if (showMobileMenu.value) {
+        setTimeout(() => {
+          const mobileMenu = document.querySelector('.mobile-menu')
+          if (mobileMenu) {
+            mobileMenu.style.display = 'block'
+          }
+        }, 10)
+      }
     }
 
     const closeMobileMenu = () => {
@@ -390,6 +400,27 @@ export default {
 @media (max-width: 767.98px) {
   .mobile-menu {
     display: block !important;
+  }
+}
+
+/* Ensure mobile menu is visible when active */
+.mobile-menu[v-if="showMobileMenu"] {
+  display: block !important;
+}
+
+/* Mobile menu animation */
+.mobile-menu {
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
