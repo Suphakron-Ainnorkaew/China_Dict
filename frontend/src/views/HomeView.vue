@@ -61,7 +61,7 @@
               class="w-full pl-16 pr-24 py-6 text-lg border-2 border-gray-200 rounded-3xl focus:ring-4 focus:ring-orange-100 focus:border-orange-400 transition-all duration-300 bg-white/90 backdrop-blur-sm shadow-2xl hover:shadow-3xl placeholder-gray-500"
             />
             <div class="absolute inset-y-0 right-0 flex items-center pr-6">
-              <div class="bg-gradient-to-r from-orange-400 to-red-500 text-white px-6 py-3 rounded-full text-sm font-semibold shadow-lg">
+              <div>
                 <router-link 
                   to="/vocabulary" 
                   class="group bg-gradient-to-r from-red-500 to-orange-500 text-white px-8 py-4 rounded-2xl font-bold text-lg shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 flex items-center space-x-2"
