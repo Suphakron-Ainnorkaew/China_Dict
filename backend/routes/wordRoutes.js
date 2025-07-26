@@ -4,7 +4,7 @@ const Word = require('../models/Word');
 const authMiddleware = require('../middleware/auth');
 
 // Get all words with pagination (admin only)
-router.get('/', authMiddleware(['admin','general','pro']), async (req, res) => {
+router.get('/',async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 20;
