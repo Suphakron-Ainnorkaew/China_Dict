@@ -3,8 +3,17 @@ import axios from 'axios';
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
-    token: localStorage.getItem('token') || null,
-    user: JSON.parse(localStorage.getItem('user')) || null
+  token: localStorage.getItem('token') || null,
+  user: (() => {
+    const userData = localStorage.getItem('user');
+    try {
+      return userData ? JSON.parse(userData) : null;
+    } catch (e) {
+      console.error('Failed to parse user from localStorage:', e);
+      localStorage.removeItem('user'); // ลบข้อมูลที่เสียหาย
+      return null;
+    }
+    })()
   }),
   getters: {
     isAuthenticated: (state) => !!state.token,
