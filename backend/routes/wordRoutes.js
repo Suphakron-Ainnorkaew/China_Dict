@@ -3,43 +3,8 @@ const router = express.Router();
 const Word = require('../models/Word');
 const authMiddleware = require('../middleware/auth');
 
-// Get all words (limited by user role)
-router.get('/', authMiddleware(), async (req, res) => {
-  try {
-    const limit = req.user.role === 'pro' ? 4000 : 2000;
-    const words = await Word.find().limit(limit);
-    res.json(words);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-});
-
-// Get all words
-router.get('/', async (req, res) => {
-  try {
-    const words = await Word.find();
-    res.json(words);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-});
-
-// Get word by ID
-router.get('/:id', async (req, res) => {
-  try {
-    const word = await Word.findById(req.params.id);
-    if (word) {
-      res.json(word);
-    } else {
-      res.status(404).json({ message: 'Word not found' });
-    }
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-});
-
-//Get 20 words in 1 page
-router.get('/', async (req, res) => {
+// Get all words with pagination (admin only)
+router.get('/', authMiddleware(['admin']), async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 20;
@@ -48,12 +13,28 @@ router.get('/', async (req, res) => {
     const total = await Word.countDocuments();
     res.json({ words, total, page, limit });
   } catch (error) {
+    console.error('Error fetching words:', error);
     res.status(500).json({ message: error.message });
   }
 });
 
-// Search words
-router.get('/search/:query', async (req, res) => {
+// Get word by ID (admin only)
+router.get('/:id', authMiddleware(['admin']), async (req, res) => {
+  try {
+    const word = await Word.findById(req.params.id);
+    if (word) {
+      res.json(word);
+    } else {
+      res.status(404).json({ message: 'Word not found' });
+    }
+  } catch (error) {
+    console.error('Error fetching word by ID:', error);
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Search words (admin only)
+router.get('/search/:query', authMiddleware(['admin']), async (req, res) => {
   try {
     const words = await Word.find({
       $or: [
@@ -64,11 +45,13 @@ router.get('/search/:query', async (req, res) => {
     });
     res.json(words);
   } catch (error) {
+    console.error('Error searching words:', error);
     res.status(500).json({ message: error.message });
   }
 });
 
-router.post('/addwords', async (req, res) => {
+// Add new word (admin only)
+router.post('/addwords', authMiddleware(['admin']), async (req, res) => {
   try {
     const word = new Word({
       chinese: req.body.chinese,
@@ -76,18 +59,18 @@ router.post('/addwords', async (req, res) => {
       thai_pronunciation: req.body.thai_pronunciation,
       thai_meaning: req.body.thai_meaning,
       part_of_speech: req.body.part_of_speech,
-      
       example_usage: req.body.example_usage || []
     });
     const newWord = await word.save();
     res.status(201).json(newWord);
   } catch (error) {
+    console.error('Error adding word:', error);
     res.status(400).json({ message: error.message });
   }
 });
 
-// Update word by ID
-router.put('/Editwords/:id', async (req, res) => {
+// Update word by ID (admin only)
+router.put('/Editwords/:id', authMiddleware(['admin']), async (req, res) => {
   try {
     const word = await Word.findById(req.params.id);
     if (word) {
@@ -98,19 +81,19 @@ router.put('/Editwords/:id', async (req, res) => {
       word.part_of_speech = req.body.part_of_speech || word.part_of_speech;
       word.example_usage = req.body.example_usage || word.example_usage;
       word.updated_at = Date.now();
-
       const updatedWord = await word.save();
       res.json(updatedWord);
     } else {
       res.status(404).json({ message: 'Word not found' });
     }
   } catch (error) {
+    console.error('Error updating word:', error);
     res.status(400).json({ message: error.message });
   }
 });
 
-// Delete word by ID
-router.delete('/Deletewords/:id', async (req, res) => {
+// Delete word by ID (admin only)
+router.delete('/Deletewords/:id', authMiddleware(['admin']), async (req, res) => {
   try {
     const word = await Word.findById(req.params.id);
     if (word) {
@@ -120,18 +103,7 @@ router.delete('/Deletewords/:id', async (req, res) => {
       res.status(404).json({ message: 'Word not found' });
     }
   } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-});
-
-router.get('/words', authMiddleware, async (req, res) => {
-  try {
-    console.log('Fetching words for user:', req.user.id);
-    const words = await Word.find();
-    console.log('Words sent:', words.length);
-    res.json(words);
-  } catch (error) {
-    console.error('Words error:', error.message);
+    console.error('Error deleting word:', error);
     res.status(500).json({ message: error.message });
   }
 });
