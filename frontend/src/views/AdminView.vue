@@ -215,8 +215,8 @@ export default {
 
     const fetchUsers = async () => {
       try {
-        console.log('Fetching users from:', `${import.meta.env.VITE_API_URL}/api/users`);
-        const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/users`, {
+        console.log('Fetching users from:', `${import.meta.env.VITE_API_URL}/users`);
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/users`, {
           headers: { Authorization: `Bearer ${authStore.token}` }
         });
         users.value = response.data;
@@ -231,7 +231,7 @@ export default {
     const fetchWords = async (newPage = 1) => {
       try {
         error.value = '';
-        const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/words`, {
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/words`, {
           params: { page: newPage, limit: limit.value },
           headers: { Authorization: `Bearer ${authStore.token}` }
         });
@@ -251,7 +251,7 @@ export default {
       try {
         error.value = '';
         const response = await axios.get(
-          `${import.meta.env.VITE_API_URL}/api/words/search/${searchQuery.value}`,
+          `${import.meta.env.VITE_API_URL}/words/search/${searchQuery.value}`,
           {
             headers: { Authorization: `Bearer ${authStore.token}` }
           }
@@ -309,14 +309,14 @@ export default {
         let response;
         if (isEditing.value) {
           response = await axios.put(
-            `${import.meta.env.VITE_API_URL}/api/words/Editwords/${form.value._id}`,
+            `${import.meta.env.VITE_API_URL}/words/Editwords/${form.value._id}`,
             wordData,
             { headers: { Authorization: `Bearer ${authStore.token}` } }
           );
           success.value = 'Word updated successfully';
         } else {
           response = await axios.post(
-            `${import.meta.env.VITE_API_URL}/api/words/addwords`,
+            `${import.meta.env.VITE_API_URL}/words/addwords`,
             wordData,
             { headers: { Authorization: `Bearer ${authStore.token}` } }
           );
@@ -335,7 +335,7 @@ export default {
       if (!confirm('Are you sure you want to delete this word?')) return;
       try {
         error.value = '';
-        await axios.delete(`${import.meta.env.VITE_API_URL}/api/words/Deletewords/${id}`, {
+        await axios.delete(`${import.meta.env.VITE_API_URL}/words/Deletewords/${id}`, {
           headers: { Authorization: `Bearer ${authStore.token}` }
         });
         success.value = 'Word deleted successfully';
