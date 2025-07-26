@@ -8,6 +8,8 @@ import { useAuthStore } from '../store';
 import VocabularyDisplay from '../views/VocabularyDisplay.vue';
 import ProfileView from '../views/ProfileView.vue';
 import GameView from '../views/GameView.vue';
+import AdminView from '@/views/AdminView.vue';
+
 
 
 const routes = [
@@ -51,6 +53,12 @@ const routes = [
     component: GameView,
     meta: { requiresAuth: true }
   },
+  {
+    path: '/admin',
+    name: 'Admin',
+    component: AdminView,
+    meta: { requiresAuth: true, requiresAdmin: true }
+  }
 ];
 
 const router = createRouter({
