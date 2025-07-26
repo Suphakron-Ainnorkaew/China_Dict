@@ -30,7 +30,7 @@
 
       <!-- Debug Info -->
       <div v-if="!isLoading" class="text-center mb-4">
-        <p class="text-gray-600">จำนวนคำทั้งหมด: {{ filteredData.length }} | จำนวนหน้า: {{ totalPages }} | คำในหน้านี้: {{ currentWords.length }}</p>
+        <p class="text-gray-600">จำนวนคำทั้งหมด: {{ totalWords }} | จำนวนหน้า: {{ totalPages }} | คำในหน้านี้: {{ words.length }}</p>
       </div>
 
       <!-- Loading State -->
@@ -44,24 +44,24 @@
       </div>
 
       <!-- Stats -->
-      <div v-if="!isLoading && filteredData.length" class="mb-6 text-center">
+      <div v-if="!isLoading && words.length" class="mb-6 text-center">
         <span class="inline-block bg-white px-4 py-2 rounded-full shadow-sm border text-sm text-gray-600">
-          แสดง {{ startIndex + 1 }}-{{ Math.min(startIndex + wordsPerPage, filteredData.length) }} จาก {{ filteredData.length }} คำ
+          แสดง {{ (currentPage - 1) * wordsPerPage + 1 }}-{{ Math.min(currentPage * wordsPerPage, totalWords) }} จาก {{ totalWords }} คำ
         </span>
       </div>
 
       <!-- Vocabulary Grid -->
-      <div v-if="!isLoading && filteredData.length" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
-        <WordCard v-for="word in currentWords" :key="word._id || word.id" :word="word" />
+      <div v-if="!isLoading && words.length" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
+        <WordCard v-for="word in words" :key="word._id || word.id" :word="word" />
       </div>
 
       <!-- No Results -->
-      <div v-if="!isLoading && !filteredData.length" class="text-center mb-6">
+      <div v-if="!isLoading && !words.length" class="text-center mb-6">
         <p class="text-gray-600">ไม่พบคำศัพท์ที่ตรงกับการค้นหา</p>
       </div>
 
       <!-- Pagination -->
-      <div v-if="totalPages > 1 && !isLoading && filteredData.length" class="flex items-center justify-center space-x-2">
+      <div v-if="totalPages > 1 && !isLoading && words.length" class="flex flex-wrap items-center justify-center gap-2">
         <button
           :disabled="currentPage === 1"
           class="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
@@ -72,19 +72,18 @@
           </svg>
           ก่อนหน้า
         </button>
-
-        <div class="flex space-x-1">
+        <template v-for="p in paginationPages" :key="p">
           <button
-            v-for="pageNum in displayedPages"
-            :key="pageNum"
-            class="w-10 h-10 rounded-lg font-medium transition-colors"
-            :class="currentPage === pageNum ? 'bg-indigo-600 text-white shadow-lg' : 'bg-white border border-gray-200 text-gray-700 hover:bg-gray-50'"
-            @click="handlePageChange(pageNum)"
-          >
-            {{ pageNum }}
-          </button>
-        </div>
-
+            v-if="p === '...'"
+            disabled
+            class="w-10 h-10 bg-white border border-gray-200 rounded-lg text-gray-400 cursor-default"
+          >...</button>
+          <button
+            v-else
+            @click="handlePageChange(p)"
+            :class="[currentPage === p ? 'bg-indigo-600 text-white shadow-lg' : 'bg-white border border-gray-200 text-gray-700 hover:bg-gray-50', 'w-10 h-10 rounded-lg font-medium transition-colors']"
+          >{{ p }}</button>
+        </template>
         <button
           :disabled="currentPage === totalPages"
           class="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
@@ -165,36 +164,32 @@ export default {
       }
     };
 
+
     // Pagination info from backend
     const totalPages = computed(() => {
       return Math.max(1, Math.ceil(totalWords.value / wordsPerPage.value));
     });
 
-    const currentWords = computed(() => words.value);
-
-    const startIndex = computed(() => (currentPage.value - 1) * wordsPerPage.value);
-
-
-    // Calculate displayed page numbers
-    const displayedPages = computed(() => {
+    // Pagination page numbers logic
+    const paginationPages = computed(() => {
       const pages = [];
-      let startPage, endPage;
-      if (totalPages.value <= 5) {
-        startPage = 1;
-        endPage = totalPages.value;
-      } else if (currentPage.value <= 3) {
-        startPage = 1;
-        endPage = 5;
-      } else if (currentPage.value >= totalPages.value - 2) {
-        startPage = totalPages.value - 4;
-        endPage = totalPages.value;
+      if (totalPages.value <= 7) {
+        for (let i = 1; i <= totalPages.value; i++) pages.push(i);
       } else {
-        startPage = currentPage.value - 2;
-        endPage = currentPage.value + 2;
-      }
-      for (let i = startPage; i <= endPage; i++) {
-        if (i > 0 && i <= totalPages.value) {
-          pages.push(i);
+        if (currentPage.value <= 4) {
+          for (let i = 1; i <= 5; i++) pages.push(i);
+          pages.push('...');
+          pages.push(totalPages.value);
+        } else if (currentPage.value >= totalPages.value - 3) {
+          pages.push(1);
+          pages.push('...');
+          for (let i = totalPages.value - 4; i <= totalPages.value; i++) pages.push(i);
+        } else {
+          pages.push(1);
+          pages.push('...');
+          for (let i = currentPage.value - 1; i <= currentPage.value + 1; i++) pages.push(i);
+          pages.push('...');
+          pages.push(totalPages.value);
         }
       }
       return pages;
@@ -228,9 +223,7 @@ export default {
       isLoading,
       error,
       totalPages,
-      startIndex,
-      currentWords,
-      displayedPages,
+      paginationPages,
       handlePageChange,
       searchWords,
       fetchWords
