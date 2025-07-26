@@ -123,7 +123,8 @@ export default {
       error.value = '';
       try {
         const response = await axios.get(`${import.meta.env.VITE_API_URL}/words`);
-        words.value = response.data.map(word => ({
+        const data = Array.isArray(response.data) ? response.data : response.data.words;
+        words.value = (data || []).map(word => ({
           ...word,
           id: word._id // Map _id to id for consistency
         }));

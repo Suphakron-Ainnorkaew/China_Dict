@@ -319,7 +319,7 @@ export default {
         error.value = '';
         const response = await axios.get(`${import.meta.env.VITE_API_URL}/words`);
         // เอาแค่ 24 คำแรกสำหรับหน้าแรก
-        words.value = response.data.slice(0, 24);
+        words.value = response.data.words.slice(0, 24);
       } catch (err) {
         error.value = err.response?.data?.message || 'Failed to fetch words';
       } finally {
@@ -338,7 +338,7 @@ export default {
         const response = await axios.get(
           `${import.meta.env.VITE_API_URL}/words/search/${encodeURIComponent(searchQuery.value)}`
         );
-        words.value = response.data;
+        words.value = response.data.words;
       } catch (err) {
         error.value = err.response?.data?.message || 'Failed to search words';
       } finally {
@@ -353,7 +353,7 @@ export default {
           headers: { Authorization: `Bearer ${authStore.token}` },
           responseType: 'blob'
         });
-        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const url = window.URL.createObjectURL(new Blob([response.data.words]));
         const link = document.createElement('a');
         link.href = url;
         link.setAttribute('download', 'chinese_thai_dictionary.pdf');

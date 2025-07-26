@@ -191,7 +191,7 @@ export default {
         const response = await axios.get(`${import.meta.env.VITE_API_URL}/words`, {
           headers: { Authorization: `Bearer ${authStore.token}` }
         });
-        words.value = response.data.map(word => ({
+        words.value = response.data.words.map(word => ({
           ...word,
           id: word._id // Map _id to id for consistency
         }));
