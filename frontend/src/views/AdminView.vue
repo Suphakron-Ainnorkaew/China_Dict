@@ -171,7 +171,7 @@
           </div>
 
           <!-- Pagination -->
-          <div class="mt-6 flex justify-center items-center gap-4">
+          <div class="mt-6 flex flex-wrap justify-center items-center gap-2">
             <button
               @click="fetchWords(page - 1)"
               :disabled="page === 1"
@@ -179,9 +179,18 @@
             >
               ← ก่อนหน้า
             </button>
-            <span class="bg-white px-4 py-2 rounded-lg border-2 border-red-200 font-semibold text-gray-700">
-              หน้า {{ page }} จาก {{ totalPages }}
-            </span>
+            <template v-for="p in paginationPages" :key="p">
+              <button
+                v-if="p === '...'"
+                disabled
+                class="px-3 py-2 bg-white border border-gray-300 rounded-lg text-gray-400 cursor-default"
+              >...</button>
+              <button
+                v-else
+                @click="fetchWords(p)"
+                :class="[p === page ? 'bg-red-500 text-white font-bold' : 'bg-white text-gray-700', 'px-3 py-2 rounded-lg border border-gray-300 hover:bg-red-100 transition']"
+              >{{ p }}</button>
+            </template>
             <button
               @click="fetchWords(page + 1)"
               :disabled="page === totalPages"
@@ -478,11 +487,37 @@ export default {
       }
     });
 
+    // Pagination page numbers logic
+    const paginationPages = computed(() => {
+      const pages = [];
+      if (totalPages.value <= 7) {
+        for (let i = 1; i <= totalPages.value; i++) pages.push(i);
+      } else {
+        if (page.value <= 4) {
+          for (let i = 1; i <= 5; i++) pages.push(i);
+          pages.push('...');
+          pages.push(totalPages.value);
+        } else if (page.value >= totalPages.value - 3) {
+          pages.push(1);
+          pages.push('...');
+          for (let i = totalPages.value - 4; i <= totalPages.value; i++) pages.push(i);
+        } else {
+          pages.push(1);
+          pages.push('...');
+          for (let i = page.value - 1; i <= page.value + 1; i++) pages.push(i);
+          pages.push('...');
+          pages.push(totalPages.value);
+        }
+      }
+      return pages;
+    });
+
     return {
       users,
       words,
       page,
       totalPages,
+      paginationPages,
       searchQuery,
       showModal,
       isEditing,
