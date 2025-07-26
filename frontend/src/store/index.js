@@ -17,6 +17,7 @@ export const useAuthStore = defineStore('auth', {
       this.user = response.data.user;
       localStorage.setItem('token', this.token);
       localStorage.setItem('user', JSON.stringify(this.user));
+      return response.data;
     },
     async register(userData) {
       const response = await axios.post(`${import.meta.env.VITE_API_URL}/auth/register`, userData);

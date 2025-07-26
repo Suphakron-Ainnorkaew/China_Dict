@@ -45,7 +45,7 @@ router.post('/login', async (req, res) => {
     if (user.role === 'admin') {
       return res.status(200).json({
         message: 'Hi Admin',
-        redirect: '/admin'
+        role: 'admin'
       });
     }
 

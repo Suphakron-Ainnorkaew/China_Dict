@@ -80,6 +80,12 @@ router.beforeEach(async (to, from, next) => {
     next('/');
     return;
   }
+
+  // Check if route requires admin role
+  if (to.meta.requiresAdmin && (!authStore.isAuthenticated || authStore.user.role !== 'admin')) {
+    next('/'); // Redirect to home if not admin
+    return;
+  }
   
   next();
 });
