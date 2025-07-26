@@ -1,12 +1,14 @@
 <template>
   <div class="container mx-auto p-6">
-    <!-- หัวข้อ -->
     <h1 class="text-3xl font-bold mb-6">Admin Dashboard</h1>
 
     <!-- ส่วนแสดงรายชื่อสมาชิก -->
     <div class="mb-8">
       <h2 class="text-2xl font-semibold mb-4">Members</h2>
-      <div v-if="users.length === 0" class="text-gray-500">No members found</div>
+      <div v-if="!usersEndpointAvailable" class="text-gray-500">
+        User list feature is not yet implemented
+      </div>
+      <div v-else-if="users.length === 0" class="text-gray-500">No members found</div>
       <table v-else class="w-full border-collapse">
         <thead>
           <tr class="bg-gray-200">
@@ -30,8 +32,6 @@
     <!-- ส่วนจัดการคำศัพท์ -->
     <div>
       <h2 class="text-2xl font-semibold mb-4">Chinese Vocabulary</h2>
-
-      <!-- ช่องค้นหา -->
       <div class="mb-4 flex items-center gap-4">
         <input
           v-model="searchQuery"
@@ -46,8 +46,6 @@
           Add New Word
         </button>
       </div>
-
-      <!-- ตารางคำศัพท์ -->
       <table class="w-full border-collapse">
         <thead>
           <tr class="bg-gray-200">
@@ -83,8 +81,6 @@
           </tr>
         </tbody>
       </table>
-
-      <!-- Pagination -->
       <div class="mt-4 flex justify-center gap-2">
         <button
           @click="fetchWords(page - 1)"
@@ -181,7 +177,6 @@
       </div>
     </div>
 
-    <!-- ข้อความแจ้งเตือน -->
     <p v-if="error" class="text-red-500 mt-4">{{ error }}</p>
     <p v-if="success" class="text-green-500 mt-4">{{ success }}</p>
   </div>
@@ -195,16 +190,17 @@ import axios from 'axios';
 export default {
   setup() {
     const authStore = useAuthStore();
-    const users = ref([]); // รายชื่อสมาชิก
-    const words = ref([]); // รายการคำศัพท์
-    const page = ref(1); // หน้าปัจจุบัน
-    const limit = ref(20); // จำนวนคำต่อหน้า
-    const total = ref(0); // จำนวนคำทั้งหมด
-    const searchQuery = ref(''); // คำค้นหา
-    const showModal = ref(false); // ควบคุม modal
-    const isEditing = ref(false); // สถานะแก้ไข
-    const error = ref(''); // ข้อความ error
-    const success = ref(''); // ข้อความ success
+    const users = ref([]);
+    const words = ref([]);
+    const page = ref(1);
+    const limit = ref(20);
+    const total = ref(0);
+    const searchQuery = ref('');
+    const showModal = ref(false);
+    const isEditing = ref(false);
+    const error = ref('');
+    const success = ref('');
+    const usersEndpointAvailable = ref(false); // ควบคุมการแสดงส่วนสมาชิก
     const form = ref({
       _id: '',
       chinese: '',
@@ -215,22 +211,23 @@ export default {
       example_usage: ''
     });
 
-    // คำนวณจำนวนหน้าทั้งหมด
     const totalPages = computed(() => Math.ceil(total.value / limit.value));
 
-    // ดึงรายชื่อสมาชิก (สมมติ endpoint /api/users)
     const fetchUsers = async () => {
       try {
+        console.log('Fetching users from:', `${import.meta.env.VITE_API_URL}/api/users`);
         const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/users`, {
           headers: { Authorization: `Bearer ${authStore.token}` }
         });
         users.value = response.data;
+        usersEndpointAvailable.value = true;
       } catch (err) {
+        console.error('Fetch users error:', err);
         error.value = err.response?.data?.message || 'Failed to fetch users';
+        usersEndpointAvailable.value = false;
       }
     };
 
-    // ดึงรายการคำศัพท์
     const fetchWords = async (newPage = 1) => {
       try {
         error.value = '';
@@ -246,10 +243,9 @@ export default {
       }
     };
 
-    // ค้นหาคำศัพท์
     const searchWords = async () => {
       if (!searchQuery.value) {
-        fetchWords(); // ถ้าไม่มี query ดึงคำทั้งหมด
+        fetchWords();
         return;
       }
       try {
@@ -261,14 +257,13 @@ export default {
           }
         );
         words.value = response.data;
-        page.value = 1; // รีเซ็ตหน้าเมื่อค้นหา
-        total.value = response.data.length; // อัปเดตจำนวนทั้งหมด
+        page.value = 1;
+        total.value = response.data.length;
       } catch (err) {
         error.value = err.response?.data?.message || 'Failed to search words';
       }
     };
 
-    // เปิด modal สำหรับเพิ่มคำ
     const openAddModal = () => {
       isEditing.value = false;
       form.value = {
@@ -283,7 +278,6 @@ export default {
       showModal.value = true;
     };
 
-    // เปิด modal สำหรับแก้ไขคำ
     const openEditModal = (word) => {
       isEditing.value = true;
       form.value = {
@@ -298,7 +292,6 @@ export default {
       showModal.value = true;
     };
 
-    // บันทึกคำ (เพิ่มหรือแก้ไข)
     const saveWord = async () => {
       try {
         error.value = '';
@@ -331,14 +324,13 @@ export default {
         }
 
         showModal.value = false;
-        fetchWords(page.value); // รีเฟรชรายการ
-        setTimeout(() => (success.value = ''), 3000); // ลบ success message หลัง 3 วินาที
+        fetchWords(page.value);
+        setTimeout(() => (success.value = ''), 3000);
       } catch (err) {
         error.value = err.response?.data?.message || 'Failed to save word';
       }
     };
 
-    // ลบคำ
     const deleteWord = async (id) => {
       if (!confirm('Are you sure you want to delete this word?')) return;
       try {
@@ -347,18 +339,19 @@ export default {
           headers: { Authorization: `Bearer ${authStore.token}` }
         });
         success.value = 'Word deleted successfully';
-        fetchWords(page.value); // รีเฟรชรายการ
+        fetchWords(page.value);
         setTimeout(() => (success.value = ''), 3000);
       } catch (err) {
         error.value = err.response?.data?.message || 'Failed to delete word';
       }
     };
 
-    // โหลดข้อมูลเมื่อ component ถูก mount
     onMounted(() => {
-      if (authStore.isAuthenticated) {
-        fetchUsers(); // ดึงสมาชิก (ถ้ามี endpoint)
-        fetchWords(); // ดึงคำศัพท์
+      console.log('Token:', authStore.token);
+      console.log('User Role:', authStore.user?.role);
+      if (authStore.isAuthenticated && authStore.user?.role === 'admin') {
+        fetchUsers();
+        fetchWords();
       } else {
         error.value = 'Please login as admin';
       }
@@ -375,6 +368,7 @@ export default {
       form,
       error,
       success,
+      usersEndpointAvailable,
       fetchWords,
       searchWords,
       openAddModal,
