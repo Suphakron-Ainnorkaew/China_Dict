@@ -122,15 +122,11 @@ export default {
       isLoading.value = true;
       error.value = '';
       try {
-        console.log('Fetching words with token:', authStore.token);
-        const response = await axios.get(`${import.meta.env.VITE_API_URL}/words`, {
-          headers: { Authorization: `Bearer ${authStore.token}` }
-        });
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/words`);
         words.value = response.data.map(word => ({
           ...word,
           id: word._id // Map _id to id for consistency
         }));
-        console.log('Fetched words:', words.value.length);
       } catch (err) {
         error.value = err.response?.data?.message || 'ไม่สามารถดึงคำศัพท์ได้';
         console.error('Fetch words error:', error.value);

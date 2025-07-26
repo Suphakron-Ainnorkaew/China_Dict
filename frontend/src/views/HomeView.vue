@@ -317,9 +317,7 @@ export default {
       try {
         loading.value = true;
         error.value = '';
-        const response = await axios.get(`${import.meta.env.VITE_API_URL}/words`, {
-          headers: { Authorization: `Bearer ${authStore.token}` }
-        });
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/words`);
         // เอาแค่ 24 คำแรกสำหรับหน้าแรก
         words.value = response.data.slice(0, 24);
       } catch (err) {
@@ -338,8 +336,7 @@ export default {
           return;
         }
         const response = await axios.get(
-          `${import.meta.env.VITE_API_URL}/words/search/${encodeURIComponent(searchQuery.value)}`,
-          { headers: { Authorization: `Bearer ${authStore.token}` } }
+          `${import.meta.env.VITE_API_URL}/words/search/${encodeURIComponent(searchQuery.value)}`
         );
         words.value = response.data;
       } catch (err) {
