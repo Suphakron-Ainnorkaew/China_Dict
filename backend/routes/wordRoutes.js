@@ -19,7 +19,7 @@ router.get('/',async (req, res) => {
 });
 
 // Get word by ID (admin only)
-router.get('/:id', authMiddleware(['admin']), async (req, res) => {
+router.get('/:id',async (req, res) => {
   try {
     const word = await Word.findById(req.params.id);
     if (word) {
@@ -34,7 +34,7 @@ router.get('/:id', authMiddleware(['admin']), async (req, res) => {
 });
 
 // Search words (admin only)
-router.get('/search/:query', authMiddleware(['admin']), async (req, res) => {
+router.get('/search/:query',async (req, res) => {
   try {
     const words = await Word.find({
       $or: [

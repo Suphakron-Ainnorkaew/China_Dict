@@ -232,8 +232,7 @@ export default {
       try {
         error.value = '';
         const response = await axios.get(`${import.meta.env.VITE_API_URL}/words`, {
-          params: { page: newPage, limit: limit.value },
-          headers: { Authorization: `Bearer ${authStore.token}` }
+          params: { page: newPage, limit: limit.value }
         });
         words.value = response.data.words;
         total.value = response.data.total;
@@ -353,7 +352,7 @@ export default {
         fetchUsers();
         fetchWords();
       } else {
-        error.value = 'Please login as admin';
+        error.value = 'คุณไม่มีสิทธิ์เข้าถึงหน้านี้ (Admin only)';
       }
     });
 
