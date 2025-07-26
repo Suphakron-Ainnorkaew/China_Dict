@@ -9,20 +9,6 @@
       <div class="absolute top-60 left-1/2 w-36 h-36 bg-purple-300 rounded-full opacity-20 blur-2xl"></div>
     </div>
 
-    <!-- Header -->
-    <header class="bg-red-600 shadow-lg relative z-10">
-      <div class="container mx-auto px-4 py-3">
-        <div class="flex items-center">
-          <div class="bg-yellow-400 w-8 h-8 rounded-full flex items-center justify-center mr-3">
-            <svg class="w-5 h-5 text-red-600" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-            </svg>
-          </div>
-          <h1 class="text-white text-xl font-bold">中泰词典</h1>
-        </div>
-      </div>
-    </header>
-
     <!-- Main Content -->
     <div class="container mx-auto p-4 relative z-10">
       <div class="flex flex-col items-center justify-center min-h-[calc(100vh-120px)] py-8">

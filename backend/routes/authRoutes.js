@@ -123,4 +123,13 @@ router.get('/profile', authMiddleware(), async (req, res) => {
   }
 });
 
+router.get('/', authMiddleware(['admin']), async (req, res) => {
+  try {
+    const users = await User.find().select('-password'); // ไม่ส่ง password
+    res.json(users);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 module.exports = router;
