@@ -42,6 +42,10 @@ router.post('/login', async (req, res) => {
     if (!user || !(await user.comparePassword(password))) {
       return res.status(401).json({ message: 'Invalid username or password' });
     }
+    if (user.role == 'admin') {
+      return res.status(200).json({ message: 'Hi Admin' });
+    }
+    
     const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '1d' });
     res.json({ 
       token, 

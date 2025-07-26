@@ -34,7 +34,7 @@ const userSchema = new mongoose.Schema({
   },
   role: { 
     type: String, 
-    enum: ['general', 'pro'], 
+    enum: ['general', 'pro', 'admin'], 
     default: 'general' 
   },
   created_at: { type: Date, default: Date.now }
