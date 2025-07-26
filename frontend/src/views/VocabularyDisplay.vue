@@ -114,20 +114,25 @@ export default {
     const searchTerm = ref('');
     const currentPage = ref(1);
     const wordsPerPage = ref(20); // ใช้ ref เพื่อให้สามารถเปลี่ยนได้ในอนาคต
+    const totalWords = ref(0);
     const isLoading = ref(false);
     const error = ref('');
 
-    // Fetch vocabulary data from backend
-    const fetchWords = async () => {
+    // Fetch vocabulary data from backend with pagination
+    const fetchWords = async (page = 1) => {
       isLoading.value = true;
       error.value = '';
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_URL}/words`);
-        const data = Array.isArray(response.data) ? response.data : response.data.words;
-        words.value = (data || []).map(word => ({
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/words`, {
+          params: { page, limit: wordsPerPage.value }
+        });
+        const data = response.data.words || [];
+        words.value = data.map(word => ({
           ...word,
           id: word._id // Map _id to id for consistency
         }));
+        totalWords.value = response.data.total || 0;
+        currentPage.value = response.data.page || 1;
       } catch (err) {
         error.value = err.response?.data?.message || 'ไม่สามารถดึงคำศัพท์ได้';
         console.error('Fetch words error:', error.value);
@@ -136,35 +141,39 @@ export default {
       }
     };
 
-    // Filter data based on search term
-    const filteredData = computed(() => {
-      const filtered = words.value.filter(word =>
-        (word.chinese || '').toLowerCase().includes(searchTerm.value.toLowerCase()) ||
-        (word.thai_meaning || '').toLowerCase().includes(searchTerm.value.toLowerCase()) ||
-        (word.pinyin || '').toLowerCase().includes(searchTerm.value.toLowerCase())
-      );
-      console.log('Filtered words:', filtered.length);
-      return filtered;
-    });
+    // Search words from backend
+    const searchWords = async () => {
+      currentPage.value = 1;
+      if (!searchTerm.value.trim()) {
+        await fetchWords(1);
+        return;
+      }
+      isLoading.value = true;
+      error.value = '';
+      try {
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/words/search/${encodeURIComponent(searchTerm.value)}`);
+        const data = Array.isArray(response.data) ? response.data : response.data.words;
+        words.value = (data || []).map(word => ({
+          ...word,
+          id: word._id
+        }));
+        totalWords.value = words.value.length;
+      } catch (err) {
+        error.value = err.response?.data?.message || 'ไม่สามารถค้นหาคำศัพท์ได้';
+      } finally {
+        isLoading.value = false;
+      }
+    };
 
-    // Calculate pagination
+    // Pagination info from backend
     const totalPages = computed(() => {
-      const pages = Math.ceil(filteredData.value.length / wordsPerPage.value);
-      console.log('Total pages:', pages, 'Filtered words:', filteredData.value.length, 'Words per page:', wordsPerPage.value);
-      return pages;
+      return Math.max(1, Math.ceil(totalWords.value / wordsPerPage.value));
     });
 
-    const startIndex = computed(() => {
-      const index = (currentPage.value - 1) * wordsPerPage.value;
-      console.log('Current page:', currentPage.value, 'Start index:', index);
-      return index;
-    });
+    const currentWords = computed(() => words.value);
 
-    const currentWords = computed(() => {
-      const sliced = filteredData.value.slice(startIndex.value, startIndex.value + wordsPerPage.value);
-      console.log('Current page:', currentPage.value, 'Start index:', startIndex.value, 'Words shown:', sliced.length);
-      return sliced;
-    });
+    const startIndex = computed(() => (currentPage.value - 1) * wordsPerPage.value);
+
 
     // Calculate displayed page numbers
     const displayedPages = computed(() => {
@@ -188,30 +197,15 @@ export default {
           pages.push(i);
         }
       }
-      console.log('Displayed pages:', pages);
       return pages;
     });
 
     const handlePageChange = (page) => {
       if (page >= 1 && page <= totalPages.value) {
-        currentPage.value = page;
+        fetchWords(page);
         window.scrollTo({ top: 0, behavior: 'smooth' });
-        console.log('Page changed to:', page);
       }
     };
-
-    const searchWords = () => {
-      currentPage.value = 1; // Reset to first page on search
-      console.log('Search term:', searchTerm.value);
-    };
-
-    // Watch for changes in filteredData to reset page if needed
-    watch(filteredData, (newFilteredData) => {
-      if (newFilteredData.length <= startIndex.value) {
-        currentPage.value = 1;
-        console.log('Reset to page 1 due to filtered data change');
-      }
-    });
 
     // Handle Vite HMR to ensure reload on file changes
     if (import.meta.hot) {
@@ -230,15 +224,16 @@ export default {
       searchTerm,
       currentPage,
       wordsPerPage,
+      totalWords,
       isLoading,
       error,
-      filteredData,
       totalPages,
       startIndex,
       currentWords,
       displayedPages,
       handlePageChange,
-      searchWords
+      searchWords,
+      fetchWords
     };
   }
 };

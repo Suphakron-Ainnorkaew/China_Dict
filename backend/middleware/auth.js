@@ -6,8 +6,16 @@ const authMiddleware = (requiredRole) => async (req, res, next) => {
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     req.user = decoded;
-    if (requiredRole && decoded.role !== requiredRole) {
-      return res.status(403).json({ message: 'Insufficient permissions' });
+    if (requiredRole) {
+      if (Array.isArray(requiredRole)) {
+        if (!requiredRole.includes(decoded.role)) {
+          return res.status(403).json({ message: 'Insufficient permissions' });
+        }
+      } else {
+        if (decoded.role !== requiredRole) {
+          return res.status(403).json({ message: 'Insufficient permissions' });
+        }
+      }
     }
     next();
   } catch (error) {
